@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap');
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:#0c1208;color:#e8e4d8;min-height:100vh}
+
+.header{background:#0c1208;border-bottom:1px solid #2a3520;padding:24px 32px 16px;position:sticky;top:0;z-index:100}
+.header-top{display:flex;align-items:baseline;gap:14px;margin-bottom:4px}
+.logo{font-family:'DM Serif Display',serif;font-size:20px;color:#a8c97a;letter-spacing:-0.5px}
+.doc-label{font-size:11px;font-weight:300;color:#4a5e3a;letter-spacing:2px;text-transform:uppercase}
+.nav{display:flex;gap:5px;margin-top:10px;flex-wrap:wrap}
+.btn{padding:5px 13px;border-radius:20px;border:1px solid #2a3520;background:transparent;color:#6a7e5a;font-family:'DM Sans',sans-serif;font-size:11px;cursor:pointer;transition:all .2s;white-space:nowrap}
+.btn:hover,.btn.active{background:#a8c97a;color:#0c1208;border-color:#a8c97a}
+
+.content{padding:0 32px 80px;max-width:920px;margin:0 auto}
+.section{display:none;animation:fadeIn .3s ease}
+.section.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+.sec-title{font-family:'DM Serif Display',serif;font-size:26px;color:#e8e4d8;margin-top:36px;margin-bottom:6px}
+.sec-sub{font-size:13px;color:#5a6e45;margin-bottom:28px;line-height:1.6}
+
+/* CARDS */
+.card{border:1px solid #2a3520;border-radius:12px;padding:20px;background:#0f1a0a;margin-bottom:12px}
+.card-accent{border-left:3px solid #a8c97a}
+.card h3{font-family:'DM Serif Display',serif;font-size:17px;color:#a8c97a;margin-bottom:10px}
+.card h4{font-size:14px;font-weight:500;color:#e8e4d8;margin-bottom:6px}
+.card p{font-size:13px;color:#8a9e78;line-height:1.7;margin-bottom:8px}
+.card p:last-child{margin-bottom:0}
+.hl{color:#a8c97a;font-weight:500}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.grid4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px}
+.full{grid-column:1/-1}
+
+.stat{font-family:'DM Serif Display',serif;font-size:32px;color:#a8c97a;line-height:1;margin-bottom:4px}
+.stat-l{font-size:11px;color:#4a5e3a;letter-spacing:0.5px;margin-bottom:6px}
+.stat-d{font-size:12px;color:#7a8e6a;line-height:1.5}
+
+.tag{display:inline-block;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;padding:3px 8px;border-radius:4px;margin-bottom:10px;font-weight:500}
+.t-green{background:#1a2e0f;color:#7ab84a;border:1px solid #2d4a1a}
+.t-blue{background:#1a1f2e;color:#7a8fc9;border:1px solid #2a3550}
+.t-amber{background:#2e1a0f;color:#c97a4a;border:1px solid #4a2d1a}
+.t-gray{background:#1e1e1e;color:#8a8a8a;border:1px solid #333}
+.t-purple{background:#1e1a2e;color:#9a7ac9;border:1px solid #352a50}
+
+.divider{border:none;border-top:1px solid #1e2c14;margin:24px 0}
+
+/* PYRAMID */
+.pyramid{margin:24px 0}
+.pyr-level{border-radius:10px;margin-bottom:8px;border:1px solid;transition:filter .2s;cursor:pointer;overflow:hidden}
+.pyr-level:hover{filter:brightness(1.12)}
+.pyr-l5{background:#0d2e1a;border-color:#1d5e3a;margin:0 0}
+.pyr-l4{background:#0e2716;border-color:#2a4a28;margin:0 20px}
+.pyr-l3{background:#111d14;border-color:#2a3820;margin:0 50px}
+.pyr-l2{background:#131a15;border-color:#253020;margin:0 80px}
+.pyr-l1{background:#141814;border-color:#222a1e;margin:0 110px}
+.pyr-header{padding:16px 20px;display:flex;align-items:center;justify-content:space-between}
+.pyr-left{flex:1}
+.pyr-label{font-size:13px;font-weight:500;color:#e8e4d8;margin-bottom:4px}
+.pyr-desc{font-size:11px;color:#6a7e5a;line-height:1.5}
+.pyr-tools{font-size:11px;color:#4a9e6a;margin-top:6px}
+.pyr-chevron{font-size:16px;color:#4a5e3a;transition:transform .3s;flex-shrink:0;margin-left:12px}
+.pyr-level.open .pyr-chevron{transform:rotate(180deg)}
+.pyr-body{max-height:0;overflow:hidden;transition:max-height .45s ease}
+.pyr-level.open .pyr-body{max-height:600px}
+.pyr-inner{padding:0 20px 16px;border-top:1px solid rgba(255,255,255,0.06)}
+.pyr-inner .pyr-full{font-size:13px;color:#8a9e78;line-height:1.7;margin-top:12px}
+.pyr-inner .tools-label{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#3d5228;margin-top:14px;margin-bottom:6px}
+.pyr-inner .tool-tags{display:flex;flex-wrap:wrap;gap:6px}
+.pyr-tool{font-size:11px;background:#1a2e0f;color:#7ab84a;border:1px solid #2d4a1a;border-radius:4px;padding:3px 8px}
+.pyr-today{margin-top:12px;padding:10px 14px;border-radius:6px;font-size:12px;line-height:1.6}
+.pt-5{background:#0a2214;color:#6aae8a}
+.pt-4{background:#0a2014;color:#5a9e7a}
+.pt-3{background:#0c1c12;color:#5a8a6a}
+.pt-2{background:#0e1c12;color:#6a8a5a}
+.pt-1{background:#101810;color:#6a7a5a}
+.pyr-arrow{text-align:center;color:#3d5228;font-size:18px;margin:2px 0}
+
+/* PUBLICS */
+.pub-card{border:1px solid #2a3520;border-radius:12px;padding:20px;background:#0f1a0a}
+.pub-num{font-family:'DM Serif Display',serif;font-size:40px;line-height:1;margin-bottom:8px}
+.pub-1 .pub-num{color:#a8c97a}
+.pub-2 .pub-num{color:#7a8fc9}
+.pub-3 .pub-num{color:#8a8a8a}
+.pub-card h4{font-size:14px;font-weight:500;color:#e8e4d8;margin-bottom:4px}
+.pub-card .sub{font-size:11px;color:#4a5e3a;margin-bottom:12px;letter-spacing:0.5px}
+.pub-row{display:flex;gap:8px;margin-bottom:6px;align-items:baseline}
+.pub-key{font-size:11px;color:#4a5e3a;min-width:80px;flex-shrink:0}
+.pub-val{font-size:12px;color:#8a9e78;line-height:1.5}
+.prio-badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:500;margin-top:10px}
+.prio-now{background:#a8c97a22;color:#a8c97a;border:1px solid #a8c97a44}
+.prio-par{background:#7a8fc922;color:#7a8fc9;border:1px solid #7a8fc944}
+.prio-sep{background:#6a6a6a22;color:#8a8a8a;border:1px solid #6a6a6a44}
+
+/* FUNNEL FLOW */
+.flow-step{display:flex;gap:14px;margin-bottom:0}
+.flow-line{display:flex;flex-direction:column;align-items:center;width:28px;flex-shrink:0}
+.flow-dot{width:10px;height:10px;border-radius:50%;border:2px solid #a8c97a;background:#0c1208;flex-shrink:0;margin-top:16px}
+.flow-conn{width:1px;flex:1;background:#2a3520;min-height:16px}
+.flow-body{flex:1;padding-bottom:14px}
+.flow-card{border:1px solid #2a3520;border-radius:10px;padding:14px 18px;background:#0f1a0a}
+.flow-card h4{font-size:13px;font-weight:500;color:#e8e4d8;margin-bottom:4px}
+.flow-card p{font-size:12px;color:#7a8e6a;line-height:1.6}
+.flow-meta{display:inline-block;margin-top:8px;font-size:11px;color:#a8c97a;background:#1a2e0f;padding:3px 10px;border-radius:10px}
+
+/* CHANNEL TABLE */
+.ch-header{display:grid;grid-template-columns:150px 1fr 1fr 88px;gap:12px;padding:0 16px 8px;border-bottom:1px solid #1e2c14;margin-bottom:8px}
+.ch-col{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#3d5228;font-weight:500}
+.ch-row{display:grid;grid-template-columns:150px 1fr 1fr 88px;gap:12px;padding:14px 16px;border:1px solid #2a3520;border-radius:10px;background:#0f1a0a;margin-bottom:8px;align-items:start;transition:border-color .2s}
+.ch-row:hover{border-color:#3d5228}
+.ch-name{font-size:13px;font-weight:500;color:#e8e4d8;margin-bottom:3px}
+.ch-pub{font-size:11px;color:#4a5e3a}
+.ch-desc{font-size:12px;color:#7a8e6a;line-height:1.6}
+.ch-tools{font-size:11px;color:#5a7045;line-height:1.7}
+.prio-a{background:#a8c97a22;color:#a8c97a;border:1px solid #a8c97a44}
+.prio-m{background:#c9a84a22;color:#c9a84a;border:1px solid #c9a84a44}
+.prio-b{background:#6a6a6a22;color:#8a8a8a;border:1px solid #6a6a6a44}
+.pr{display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:500}
+
+/* PHASES */
+.phase-hdr{display:flex;align-items:center;gap:14px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid #2a3520}
+.ph-num{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:18px;flex-shrink:0}
+.ph1{background:#a8c97a;color:#0c1208}
+.ph2{background:#6b9e3c;color:#0c1208}
+.ph3{background:#3d5228;color:#a8c97a}
+.ph-meta h2{font-family:'DM Serif Display',serif;font-size:19px;color:#e8e4d8;margin-bottom:2px}
+.ph-meta .period{font-size:11px;color:#4a5e3a;letter-spacing:1px;text-transform:uppercase}
+.ph-meta .obj{font-size:12px;color:#7a8e6a;margin-top:3px}
+.need-lbl{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#3d5228;margin:10px 0 3px}
+.need-val{font-size:11px;color:#5a7045}
+
+/* IMPEDIMENTS */
+.imp{border:1px solid #2a3520;border-radius:10px;padding:16px 18px;background:#0f1a0a;margin-bottom:10px;display:grid;grid-template-columns:28px 1fr;gap:12px;align-items:start}
+.imp-icon{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;flex-shrink:0;margin-top:2px}
+.i-h{background:#4a1a1a;color:#c97a7a}
+.i-m{background:#3a2e0a;color:#c9a84a}
+.i-l{background:#1a2e0f;color:#7ab84a}
+.imp h4{font-size:13px;font-weight:500;color:#e8e4d8;margin-bottom:4px}
+.imp p{font-size:12px;color:#7a8e6a;line-height:1.6;margin-bottom:8px}
+.imp-sol{font-size:11px;color:#6a9e4a;background:#1a2e0f;border-radius:6px;padding:8px 12px;line-height:1.5}
+
+/* NEWSLETTER */
+.nl-flow{display:flex;gap:0;margin-top:20px;overflow-x:auto;padding-bottom:8px}
+.nl-step{flex:1;min-width:130px;position:relative}
+.nl-step:not(:last-child)::after{content:'→';position:absolute;right:-10px;top:24px;color:#3d5228;font-size:16px;z-index:1}
+.nl-box{border:1px solid #2a3520;border-radius:10px;padding:14px;background:#0f1a0a;margin-right:20px}
+.nl-box h5{font-size:12px;font-weight:500;color:#e8e4d8;margin-bottom:6px}
+.nl-box p{font-size:11px;color:#6a7e5a;line-height:1.5}
+.nl-num{font-family:'DM Serif Display',serif;font-size:22px;color:#a8c97a;margin-bottom:4px}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <span class="logo">FeeAgro</span>
+    <span class="doc-label">Estratégia de aquisição · Documento base · Mai/2026</span>
+  </div>
+  <div class="nav">
+    <button class="btn active" onclick="show('mercado',this)">Mercado</button>
+    <button class="btn" onclick="show('publicos',this)">Públicos</button>
+    <button class="btn" onclick="show('consciencia',this)">Nível de consciência</button>
+    <button class="btn" onclick="show('possibilidades',this)">Possibilidades</button>
+    <button class="btn" onclick="show('funil',this)">Funil proposto</button>
+    <button class="btn" onclick="show('newsletter',this)">Newsletter</button>
+    <button class="btn" onclick="show('canais',this)">Canais</button>
+    <button class="btn" onclick="show('fases',this)">Fases</button>
+    <button class="btn" onclick="show('impedimentos',this)">Impedimentos</button>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- ======== MERCADO ======== -->
+<div id="mercado" class="section active">
+  <p class="sec-title">Contexto de mercado</p>
+  <p class="sec-sub">Passo zero — entender o tabuleiro antes de qualquer peça. Empresa com 5 meses de operação em um mercado em expansão acelerada.</p>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="stat">204%</div>
+      <div class="stat-l">crescimento FIAGRO em 2 anos</div>
+      <div class="stat-d">Patrimônio líquido saltou de R$14,7bi para R$44,7bi entre mar/2023 e mar/2025. Demanda por investimento no agro nunca foi tão alta.</div>
+    </div>
+    <div class="card">
+      <div class="stat">+1.000%</div>
+      <div class="stat-l">crescimento RWA no Brasil em 12 meses</div>
+      <div class="stat-d">Mercado de ativos tokenizados atingiu R$1,5bi em jan/2026. A FeeAgro está no centro dessa narrativa — tokenização de commodities físicas.</div>
+    </div>
+    <div class="card">
+      <div class="stat">60%</div>
+      <div class="stat-l">do volume investido por P.F. em renda fixa</div>
+      <div class="stat-d">Com Selic a 15%, renda fixa domina. Mas isso cria um benchmark alto — o lead já pergunta: "existe algo que rende mais com segurança parecida?" FeeAgro responde isso com 21% a.a.</div>
+    </div>
+    <div class="card">
+      <div class="stat">333k</div>
+      <div class="stat-l">contas em FIDCs — dobrou em 12 meses</div>
+      <div class="stat-d">Investidor brasileiro está migrando de renda fixa bancária para crédito privado estruturado. A FeeAgro está no caminho dessa migração — precisa interceptar esse fluxo.</div>
+    </div>
+  </div>
+
+  <div class="card card-accent" style="margin-top:16px">
+    <h3>As 3 forças que tornam o timing favorável agora</h3>
+    <p><span class="hl">Força 1 — Selic alta cria o benchmark.</span> CDI a 14,5% faz o investidor questionar o banco. A pergunta "existe coisa melhor com segurança parecida?" nunca esteve tão presente. A FeeAgro responde com 21% a.a. lastreado em grão físico. A janela é agora — antes que a Selic caia.</p>
+    <p><span class="hl">Força 2 — Crédito privado está em expansão.</span> FIDCs abertos para varejo, crescimento de 22,5% em patrimônio em 12 meses. O investidor está mais aberto a sair dos produtos bancários. A FeeAgro está no caminho dessa migração.</p>
+    <p><span class="hl">Força 3 — RWA e tokenização são a narrativa do momento.</span> Mercado cresceu 1.000% em 12 meses. Mas ainda há confusão com cripto. A FeeAgro precisa se posicionar como "tokenização de ativo físico real" — não como criptomoeda. Os materiais já fazem isso bem.</p>
+  </div>
+
+  <div class="card" style="margin-top:12px">
+    <h3>Risco de mercado que abre janela de urgência</h3>
+    <p>A MP 1.303/2025 pode alterar tributação de FIAGRO, CRA e FIDC para pessoa física a partir de 2026. Isso cria um elemento de urgência real para o lead agir antes das mudanças — um gatilho poderoso para copy de direct response. Monitorar aprovação e atualizar materiais conforme o cenário evolui.</p>
+  </div>
+
+  <div class="card card-accent" style="margin-top:12px">
+    <h3>Diagnóstico do funil atual</h3>
+    <div class="grid4" style="margin-top:12px">
+      <div><div class="stat" style="font-size:28px">162</div><div class="stat-l">leads no período</div><div class="stat-d">141 formulário Meta · 21 WhatsApp</div></div>
+      <div><div class="stat" style="font-size:28px">97%</div><div class="stat-l">interagem com SDR</div><div class="stat-d">SDR funciona. O problema está antes.</div></div>
+      <div><div class="stat" style="font-size:28px;color:#c97a7a">7%</div><div class="stat-l">avançam ao assessor</div><div class="stat-d">93 em 100 ficam em recontato.</div></div>
+      <div><div class="stat" style="font-size:28px">3×</div><div class="stat-l">potencial sem + budget</div><div class="stat-d">Qualificação antes do SDR resolve.</div></div>
+    </div>
+    <div style="margin-top:16px;padding-top:14px;border-top:1px solid #1e2c14">
+      <p style="font-size:13px;color:#8a9e78;line-height:1.7">O gargalo não é o SDR — ele converte 97% dos que chegam. O problema é a <span class="hl">qualidade do lead que entra</span>. Formulário nativo do Meta tem fricção zero: o lead preenche por impulso, sem entender o produto. A solução é adicionar fricção inteligente antes do SDR — presell, quiz ou VSL — para que só leads com intenção real cheguem ao WhatsApp.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ======== PÚBLICOS ======== -->
+<div id="publicos" class="section">
+  <p class="sec-title">Os três públicos</p>
+  <p class="sec-sub">Três avatares distintos com dores, canais e funis completamente diferentes. Misturá-los em um mesmo funil dilui a mensagem e mata a conversão.</p>
+
+  <div class="grid3">
+    <div class="pub-card pub-1">
+      <div class="pub-num">P1</div>
+      <h4>Investidor insatisfeito</h4>
+      <div class="sub">CDB · Poupança · Tesouro</div>
+      <div class="pub-row"><span class="pub-key">Consciência</span><span class="pub-val">Nível 1–2. Sente que perde pra inflação, não sabe a solução.</span></div>
+      <div class="pub-row"><span class="pub-key">Motivação</span><span class="pub-val">Superar o CDI com segurança percebida. Não perder para a inflação.</span></div>
+      <div class="pub-row"><span class="pub-key">Objeção</span><span class="pub-val">"É seguro?" e "É complicado?"</span></div>
+      <div class="pub-row"><span class="pub-key">Ticket</span><span class="pub-val">R$10k – R$50k</span></div>
+      <div class="pub-row"><span class="pub-key">Canal</span><span class="pub-val">Meta Ads · YouTube Ads · Presell</span></div>
+      <div class="pub-row"><span class="pub-key">Vive em</span><span class="pub-val">Instagram, YouTube, podcasts de finanças</span></div>
+      <div><span class="prio-badge prio-now">Prioridade agora</span></div>
+    </div>
+
+    <div class="pub-card pub-2">
+      <div class="pub-num">P2</div>
+      <h4>Investidor sofisticado</h4>
+      <div class="sub">FIDC · CRA · Faria Lima</div>
+      <div class="pub-row"><span class="pub-key">Consciência</span><span class="pub-val">Nível 3–4. Conhece soluções parecidas, avalia a FeeAgro.</span></div>
+      <div class="pub-row"><span class="pub-key">Motivação</span><span class="pub-val">Descorrelação e alpha real. Saída do paper agro para ativo real.</span></div>
+      <div class="pub-row"><span class="pub-key">Objeção</span><span class="pub-val">"Qual o track record?" e "Quem é o gestor?"</span></div>
+      <div class="pub-row"><span class="pub-key">Ticket</span><span class="pub-val">R$50k – R$500k</span></div>
+      <div class="pub-row"><span class="pub-key">Canal</span><span class="pub-val">LinkedIn · Assessores AAI · Conteúdo técnico</span></div>
+      <div class="pub-row"><span class="pub-key">Vive em</span><span class="pub-val">LinkedIn, podcasts especializados, escritórios AAI</span></div>
+      <div><span class="prio-badge prio-par">Trilha paralela</span></div>
+    </div>
+
+    <div class="pub-card pub-3">
+      <div class="pub-num">P3</div>
+      <h4>Operador do agro</h4>
+      <div class="sub">Produtor · Cerealista · Transportador</div>
+      <div class="pub-row"><span class="pub-key">Consciência</span><span class="pub-val">Nível 2–3. Conhece a dor do banco lento, desconfia de digital.</span></div>
+      <div class="pub-row"><span class="pub-key">Motivação</span><span class="pub-val">Crédito rápido no tempo da safra. Sem burocracia bancária.</span></div>
+      <div class="pub-row"><span class="pub-key">Objeção</span><span class="pub-val">"Funciona mesmo?" · Desconfiança de fintech</span></div>
+      <div class="pub-row"><span class="pub-key">Papel</span><span class="pub-val">Lado da OFERTA de capital — não da demanda</span></div>
+      <div class="pub-row"><span class="pub-key">Canal</span><span class="pub-val">Offline · Feiras agro · WhatsApp grupos · Indicação</span></div>
+      <div class="pub-row"><span class="pub-key">Atenção</span><span class="pub-val">Funil completamente separado dos investidores</span></div>
+      <div><span class="prio-badge prio-sep">Funil separado</span></div>
+    </div>
+  </div>
+
+  <div class="card card-accent" style="margin-top:16px">
+    <h3>A decisão estratégica mais importante</h3>
+    <p>Direct response não escala sem escolher um público primário. Tentar falar com P1, P2 e P3 ao mesmo tempo no mesmo funil dilui cada mensagem a ponto de não mover ninguém. A recomendação é:</p>
+    <p><span class="hl">P1 como foco principal agora</span> — maior volume disponível para escalar em Meta Ads, nível de consciência que responde bem a conteúdo educacional, ticket de entrada viável (R$10k), funil SDR→assessor já montado.</p>
+    <p><span class="hl">P2 em trilha paralela</span> — LinkedIn + assessores AAI. Menor volume, maior ticket, ciclo mais longo. Começa a ser trabalhado na Fase 2.</p>
+    <p><span class="hl">P3 com estratégia separada</span> — completamente fora do funil de investidor. Canal offline, feiras, indicação direta.</p>
+  </div>
+</div>
+
+<!-- ======== CONSCIÊNCIA ======== -->
+<div id="consciencia" class="section">
+  <p class="sec-title">Funil por nível de consciência</p>
+  <p class="sec-sub">Baseado no framework de Eugene Schwartz e no Marketing Funnel Engineering Grid. Cada nível exige uma abordagem, formato e gancho completamente diferente.</p>
+
+  <div class="card" style="margin-bottom:16px">
+    <p style="font-size:13px;color:#8a9e78;line-height:1.7">O erro mais comum em marketing de investimentos: criar peças no nível 3–4 (consciente da solução e do produto) para um público que está no nível 1–2. O lead não entende a mensagem, não confia e não converte. O funil atual da FeeAgro tem esse problema — os anúncios pressupõem um lead que já sabe o que é tokenização de agro. A maioria do tráfego disponível no Meta está no nível 1–2.</p>
+  </div>
+
+  <div class="pyramid">
+
+    <div class="pyr-level pyr-l5" onclick="togglePyr(this)">
+      <div class="pyr-header">
+        <div class="pyr-left">
+          <div class="pyr-label">Nível 5 — Mais consciente · Most Aware</div>
+          <div class="pyr-desc">Já conhece a FeeAgro, comparou com concorrentes, está pronto para decidir.</div>
+          <div class="pyr-tools">→ Assessor humano · CRM · proposta direta · oferta de entrada</div>
+        </div>
+        <div class="pyr-chevron">⌄</div>
+      </div>
+      <div class="pyr-body"><div class="pyr-inner">
+        <p class="pyr-full">Esse lead já conhece a FeeAgro, já comparou com CDB, FIAGRO e outros produtos, e está pronto para tomar uma decisão. Não precisa ser educado — precisa de oferta clara, garantia e CTA direto. Qualquer copy longa aqui é um erro: você está atrasando a conversão de alguém que já quer comprar. A abordagem é direta: "você já conhece o SiloRenda, quer conversar com um especialista para entender como alocar?"</p>
+        <div class="pyr-today pt-5">📍 <strong>Hoje na FeeAgro:</strong> esse lead chega via retargeting ou indicação direta. É o menor volume, mas o mais fácil de fechar. O assessor humano é quem cuida daqui.</div>
+        <div class="tools-label">Ferramentas para esse nível</div>
+        <div class="tool-tags">
+          <span class="pyr-tool">Assessor humano</span>
+          <span class="pyr-tool">CRM com proposta</span>
+          <span class="pyr-tool">Oferta direta</span>
+          <span class="pyr-tool">Retargeting de produto</span>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="pyr-arrow">↑ funil mais curto · menor volume · maior intenção</div>
+
+    <div class="pyr-level pyr-l4" onclick="togglePyr(this)">
+      <div class="pyr-header">
+        <div class="pyr-left">
+          <div class="pyr-label">Nível 4 — Consciente do produto · Product Aware</div>
+          <div class="pyr-desc">Conhece a FeeAgro, está comparando com CDB, FIAGRO, CRA. Precisa de diferenciação e prova.</div>
+          <div class="pyr-tools">→ LP principal · quiz de perfil · retargeting · SDR WhatsApp · FAQ e objeções</div>
+        </div>
+        <div class="pyr-chevron">⌄</div>
+      </div>
+      <div class="pyr-body"><div class="pyr-inner">
+        <p class="pyr-full">Esse lead já conhece a FeeAgro — provavelmente viu um anúncio, leu o site ou foi indicado. Agora está comparando: "FeeAgro vs CDB do meu banco", "FeeAgro vs FIAGRO". Tem interesse real, mas ainda tem objeções de segurança, regulamentação e track record. A abordagem precisa diferenciar e provar. Comparativo claro de rentabilidade, estrutura jurídica (FIDC, CVM), garantias em camadas.</p>
+        <div class="pyr-today pt-4">📍 <strong>Hoje na FeeAgro:</strong> o SDR recebe esses leads mas sem contexto — não sabe que o lead já conhece o produto. Com o quiz integrado, o SDR abriria a conversa em outro nível, já sabendo o produto de interesse.</div>
+        <div class="tools-label">Ferramentas para esse nível</div>
+        <div class="tool-tags">
+          <span class="pyr-tool">LP principal com FAQ</span>
+          <span class="pyr-tool">Quiz de perfil</span>
+          <span class="pyr-tool">SDR contextualizado</span>
+          <span class="pyr-tool">Retargeting</span>
+          <span class="pyr-tool">Comparativo de produtos</span>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="pyr-level pyr-l3" onclick="togglePyr(this)">
+      <div class="pyr-header">
+        <div class="pyr-left">
+          <div class="pyr-label">Nível 3 — Consciente da solução · Solution Aware</div>
+          <div class="pyr-desc">Sabe que existe investimento em agro, crédito privado, mas não conhece a FeeAgro.</div>
+          <div class="pyr-tools">→ Advertorial · presell · masterclass · YouTube Ads · LinkedIn · comparativo</div>
+        </div>
+        <div class="pyr-chevron">⌄</div>
+      </div>
+      <div class="pyr-body"><div class="pyr-inner">
+        <p class="pyr-full">Esse lead já sabe que existe crédito privado, FIAGRO, investimento em agro. Pode ter lido em um portal financeiro ou ouvido em um podcast. Mas não conhece a FeeAgro. A pergunta dele é: "por que FeeAgro e não FIAGRO ou CRA de uma gestora grande?" A abordagem precisa posicionar a FeeAgro como a melhor opção dentro do universo que ele já conhece. O mecanismo único — "você financia diretamente, sem intermediário, com lastro físico em grão auditável" — é o diferenciador central.</p>
+        <div class="pyr-today pt-3">📍 <strong>Hoje na FeeAgro:</strong> esse lead não está sendo capturado com eficiência. O criativo atual não fala diretamente com quem já conhece o universo mas não conhece a FeeAgro. É uma oportunidade não explorada ainda.</div>
+        <div class="tools-label">Ferramentas para esse nível</div>
+        <div class="tool-tags">
+          <span class="pyr-tool">Advertorial / presell</span>
+          <span class="pyr-tool">Masterclass mensal</span>
+          <span class="pyr-tool">YouTube Ads VSL</span>
+          <span class="pyr-tool">LinkedIn (P2)</span>
+          <span class="pyr-tool">FeeAgro vs FIAGRO</span>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="pyr-level pyr-l2" onclick="togglePyr(this)">
+      <div class="pyr-header">
+        <div class="pyr-left">
+          <div class="pyr-label">Nível 2 — Consciente do problema · Problem Aware</div>
+          <div class="pyr-desc">Maior volume disponível no Meta. Sente que CDB não basta. Não sabe a solução.</div>
+          <div class="pyr-tools">→ Meta Ads gancho de problema · VSL curto · story lead · quiz · newsletter</div>
+        </div>
+        <div class="pyr-chevron">⌄</div>
+      </div>
+      <div class="pyr-body"><div class="pyr-inner">
+        <p class="pyr-full">Esse é o maior grupo de leads disponíveis no Meta. Investe em CDB, poupança ou Tesouro Selic. Sente que está "perdendo para a inflação" ou que o banco "fica com a diferença". Mas não sabe qual é a solução. A abordagem precisa começar pelo problema, não pelo produto. "Seu CDB rendeu 14% esse ano. Isso parece bom até você descobrir que existe algo que rendeu 21% com lastro em grão físico." O gancho é a dor — a FeeAgro aparece como solução depois que a dor foi validada.</p>
+        <div class="pyr-today pt-2">📍 <strong>Hoje na FeeAgro:</strong> o lead nesse nível preenche o formulário por impulso, sem entender o produto. Por isso 93% ficam em limbo no SDR. Presell + quiz antes do formulário resolve — lead chega no WhatsApp sabendo o que é FeeAgro.</div>
+        <div class="tools-label">Ferramentas para esse nível</div>
+        <div class="tool-tags">
+          <span class="pyr-tool">Meta Ads gancho de problema</span>
+          <span class="pyr-tool">Presell / advertorial</span>
+          <span class="pyr-tool">VSL curto 60–90s</span>
+          <span class="pyr-tool">Quiz de entrada</span>
+          <span class="pyr-tool">Newsletter educacional</span>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="pyr-arrow">↓ funil mais longo · maior volume · menor intenção</div>
+
+    <div class="pyr-level pyr-l1" onclick="togglePyr(this)">
+      <div class="pyr-header">
+        <div class="pyr-left">
+          <div class="pyr-label">Nível 1 — Sem consciência · Unaware</div>
+          <div class="pyr-desc">Investe em poupança ou CDB sem questionar. Nunca pensou em agro como investimento.</div>
+          <div class="pyr-tools">→ Reels educacionais · tráfego frio com story lead · blog · conteúdo de descoberta</div>
+        </div>
+        <div class="pyr-chevron">⌄</div>
+      </div>
+      <div class="pyr-body"><div class="pyr-inner">
+        <p class="pyr-full">Esse lead investe em poupança ou CDB sem questionar. Nunca pensou em agronegócio como investimento. A abordagem precisa criar um problema que ele não sabia que tinha. O formato Story Lead funciona bem: uma história sobre o campo, sobre como o dinheiro funciona no agro, que vai revelando gradualmente que existe uma oportunidade nunca considerada. É o funil mais longo — mas também o maior mercado endereçável. Para uma empresa de 5 meses, esse nível é melhor trabalhado via conteúdo orgânico do que via tráfego pago.</p>
+        <div class="pyr-today pt-1">📍 <strong>Hoje na FeeAgro:</strong> não existe estratégia específica para esse nível. Os reels educacionais produzidos (como o manifesto "Nasceu no MT") começam a tocar nesse público — mas sem funil conectado depois.</div>
+        <div class="tools-label">Ferramentas para esse nível</div>
+        <div class="tool-tags">
+          <span class="pyr-tool">Reels educacionais orgânicos</span>
+          <span class="pyr-tool">Story lead no Meta</span>
+          <span class="pyr-tool">Blog com SEO</span>
+          <span class="pyr-tool">Tráfego frio com história</span>
+          <span class="pyr-tool">Newsletter de descoberta</span>
+        </div>
+      </div></div>
+    </div>
+
+  </div>
+
+  <div class="card card-accent">
+    <h3>Onde está o funil atual e onde precisa chegar</h3>
+    <p><span class="hl">Hoje:</span> anúncio estático → formulário nativo → SDR. Isso pressupõe lead no nível 3–4. O criativo de "Invista no campo, colha o futuro" é posicionamento de marca, não gancho de direct response para nível 1–2.</p>
+    <p><span class="hl">O que precisa:</span> criar entrada nos níveis 1 e 2 com ganchos de problema ("seu CDB está perdendo pra inflação"), aquecer com presell ou VSL, qualificar com quiz, e só então entregar ao SDR. O lead que chega no WhatsApp sabendo o que é FeeAgro converte em assessor a 3–4× a taxa atual.</p>
+  </div>
+</div>
+
+<!-- ======== POSSIBILIDADES ======== -->
+<div id="possibilidades" class="section">
+  <p class="sec-title">Possibilidades de aquisição</p>
+  <p class="sec-sub">Mapa completo de ferramentas e formatos disponíveis — cada um com sua função específica no ecossistema de aquisição.</p>
+
+  <div class="grid2">
+    <div class="card">
+      <span class="tag t-amber">Aquecimento de lead</span>
+      <h4>Presell / Advertorial</h4>
+      <p>Página que parece conteúdo mas é copy. Formato "Por que saí do CDB e fui para o agro" em primeira pessoa. Resolve objeções de segurança e complexidade antes do lead chegar no SDR. Um dos formatos mais testados da história do direct response.</p>
+      <p><span class="hl">Função:</span> converter lead nível 2 em nível 3 antes do formulário.</p>
+    </div>
+
+    <div class="card">
+      <span class="tag t-green">Qualificação</span>
+      <h4>Quiz de perfil de investidor</h4>
+      <p>4–5 perguntas: valor disponível, prazo, maior preocupação, experiência anterior. Entrega recomendação personalizada de produto. Filtra lead abaixo de R$10k. Segmenta automaticamente no CRM. SDR abre a conversa já sabendo qual produto recomendar.</p>
+      <p><span class="hl">Função:</span> pré-qualificar e pré-segmentar. Potencial de triplicar taxa de avanço para assessor.</p>
+    </div>
+
+    <div class="card">
+      <span class="tag t-purple">Autoridade</span>
+      <h4>Masterclass / Webinário mensal</h4>
+      <p>"Como o agro paga 21% ao ano — e por que o banco não quer que você saiba." 60–90 min ao vivo. Constrói credibilidade de empresa jovem, gera lista qualificada e cria evento que justifica budget de ads para tráfego frio. Formato que mais converte para ticket de R$10k–50k.</p>
+      <p><span class="hl">Função:</span> autoridade + conversão de leads aquecidos + geração de lista.</p>
+    </div>
+
+    <div class="card">
+      <span class="tag t-green">Distribuição</span>
+      <h4>Newsletter própria</h4>
+      <p>Captura e-mail no quiz, na masterclass e no blog. Sequência educacional sobre o agro e os produtos FeeAgro. Nutre leads que não estão prontos. O único ativo de audiência que ninguém pode tirar — não depende de algoritmo, não paga CPM, não some se a conta for suspensa.</p>
+      <p><span class="hl">Função:</span> construir audiência própria + reativar leads frios + nurturing de longo prazo.</p>
+    </div>
+
+    <div class="card">
+      <span class="tag t-blue">Canal pago</span>
+      <h4>YouTube Ads com VSL educacional</h4>
+      <p>Investidor P.F. de 35–55 anos está no YouTube. VSL de 3–5 min com estrutura Kishotenketsu explicando o mecanismo do SiloRenda. Segmentação por interesse em finanças pessoais + agronegócio. Lead chega no WhatsApp muito mais qualificado que pelo Meta frio.</p>
+      <p><span class="hl">Função:</span> tráfego qualificado de lead com intenção maior que Meta.</p>
+    </div>
+
+    <div class="card">
+      <span class="tag t-amber">Conteúdo</span>
+      <h4>Blog com SEO orgânico</h4>
+      <p>Artigos ranqueando para "como investir no agronegócio", "melhor que CDB 2026", "o que é CPR", "investimento com lastro físico". Tráfego orgânico e gratuito. Efeito composto a partir de 3–6 meses. Alimenta a newsletter e o funil indefinidamente sem custo de mídia.</p>
+      <p><span class="hl">Função:</span> ativo de longo prazo · tráfego qualificado sem CPM.</p>
+    </div>
+
+    <div class="card">
+      <span class="tag t-blue">Canal B2B</span>
+      <h4>Parcerias com Assessores AAI</h4>
+      <p>Assessores independentes (XP, BTG, plataformas independentes) sempre buscam produtos de crédito privado com boa rentabilidade para oferecer à base de clientes. Onboarding de AAIs como canal de distribuição para P2. Escalável sem depender de ads.</p>
+      <p><span class="hl">Função:</span> distribuição B2B para Público 2 · tickets maiores · sem custo de mídia.</p>
+    </div>
+
+    <div class="card">
+      <span class="tag t-purple">Automação</span>
+      <h4>Sequências de e-mail + WhatsApp</h4>
+      <p>Leads que não converteram entram em fluxo automático segmentado por produto de interesse (capturado no quiz) e nível de engajamento. Reativa base sem custo adicional. Convida para próxima masterclass. O sistema que transforma todas as outras peças em funil — sem ele são peças soltas.</p>
+      <p><span class="hl">Função:</span> nurturing · reativação de base · funil 24/7 sem equipe.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ======== FUNIL ======== -->
+<div id="funil" class="section">
+  <p class="sec-title">Funil proposto</p>
+  <p class="sec-sub">Fluxo completo de aquisição com qualificação progressiva. Público 1 como caso principal — da descoberta ao investimento.</p>
+
+  <div style="margin-bottom:24px">
+    <div class="flow-step">
+      <div class="flow-line"><div class="flow-dot" style="border-color:#4a5e3a"></div><div class="flow-conn"></div></div>
+      <div class="flow-body"><div class="flow-card">
+        <h4>1. Entrada — Anúncio de direct response</h4>
+        <p>Meta Ads com gancho de problema, não de marca. "Seu CDB rendeu 14% esse ano. O SiloRenda rendeu 21% com grão físico como lastro." Ou VSL curto de 30–60s. Lead clica e vai para o presell — não direto para o formulário.</p>
+        <span class="flow-meta">Canal: Meta Ads · YouTube Ads · nível 1–2</span>
+      </div></div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-line"><div class="flow-dot" style="border-color:#6a7e5a"></div><div class="flow-conn"></div></div>
+      <div class="flow-body"><div class="flow-card">
+        <h4>2. Aquecimento — Presell / Advertorial</h4>
+        <p>Página de aquecimento entre o anúncio e o formulário. Formato artigo em primeira pessoa. Educa sobre o mecanismo, responde objeções de segurança e complexidade. Não vende — prepara. CTA: "Descubra qual produto é para o seu perfil."</p>
+        <span class="flow-meta">Ferramenta: LP dedicada · fora do site institucional</span>
+      </div></div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-line"><div class="flow-dot" style="border-color:#8a9e78"></div><div class="flow-conn"></div></div>
+      <div class="flow-body"><div class="flow-card">
+        <h4>3. Qualificação — Quiz de perfil</h4>
+        <p>4–5 perguntas. Valor disponível, prazo, maior preocupação, experiência anterior. Entrega recomendação de produto personalizada. Filtra lead abaixo de R$10k. Segmenta automaticamente no CRM. Lead vê o resultado e é convidado a falar com especialista.</p>
+        <span class="flow-meta">Ferramenta: Typeform · integração Zapier → CRM</span>
+      </div></div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-line"><div class="flow-dot" style="border-color:#a8c97a"></div><div class="flow-conn"></div></div>
+      <div class="flow-body"><div class="flow-card">
+        <h4>4. Conversa — SDR WhatsApp (IA)</h4>
+        <p>Lead chega com contexto completo. SDR sabe: produto recomendado, faixa de ticket, prazo, objeção principal. Abre a conversa personalizada. Script por produto. Meta esperada: 20–30% de avanço para assessor (vs 7% atual).</p>
+        <span class="flow-meta">Meta: 20–30% de avanço ao assessor</span>
+      </div></div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-line"><div class="flow-dot" style="border-color:#c9e0a0"></div><div class="flow-conn"></div></div>
+      <div class="flow-body"><div class="flow-card">
+        <h4>5. Fechamento — Assessor humano</h4>
+        <p>Lead qualificado com contexto completo no CRM. Assessor recebe produto de interesse, ticket, objeções levantadas no SDR. Conversa consultiva e proposta específica por produto.</p>
+        <span class="flow-meta">Canal: WhatsApp · reunião por vídeo · CRM</span>
+      </div></div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-line"><div class="flow-dot" style="border-color:#3d5228"></div></div>
+      <div class="flow-body"><div class="flow-card">
+        <h4>6. Nutrição — Leads não convertidos</h4>
+        <p>Quem passou pelo quiz mas não avançou entra em sequência automática de e-mail + WhatsApp. Conteúdo educacional por produto de interesse. Convite para próxima masterclass mensal. Reativa base sem custo adicional.</p>
+        <span class="flow-meta">Ferramenta: e-mail automação · WhatsApp Business API</span>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== NEWSLETTER ======== -->
+<div id="newsletter" class="section">
+  <p class="sec-title">Newsletter — o ativo que ninguém pode tirar</p>
+  <p class="sec-sub">A maioria das empresas trata newsletter como acessório. É o ativo mais estratégico do ecossistema — o único que não depende de algoritmo, não paga CPM e não desaparece se a conta for suspensa.</p>
+
+  <div class="card card-accent">
+    <h3>Por que newsletter é estratégico para a FeeAgro</h3>
+    <p>A FeeAgro está construindo audiência do zero. Todo lead que passa pelo quiz, assiste a masterclass ou lê um artigo do blog pode entrar na lista de e-mail. Essa lista, ao longo de 12 meses, se torna o ativo de marketing mais valioso da empresa — uma base aquecida que pode ser reativada a custo zero quando um novo produto for lançado, quando houver uma oportunidade de safra ou quando a Selic cair e o argumento de rentabilidade precisar ser ajustado.</p>
+    <p>Meta Ads pode ser pausado, conta pode ser suspensa, algoritmo muda. A lista de e-mail própria não.</p>
+  </div>
+
+  <div style="margin-top:20px">
+    <h4 style="font-size:14px;font-weight:500;color:#e8e4d8;margin-bottom:16px">Estrutura da newsletter FeeAgro</h4>
+    <div class="nl-flow">
+      <div class="nl-step">
+        <div class="nl-box">
+          <div class="nl-num">1</div>
+          <h5>Captura</h5>
+          <p>Quiz · Masterclass · Blog · LP de produto. E-mail é o ingresso de entrada.</p>
+        </div>
+      </div>
+      <div class="nl-step">
+        <div class="nl-box">
+          <div class="nl-num">2</div>
+          <h5>Boas-vindas</h5>
+          <p>E-mail imediato com resultado do quiz + explicação do produto recomendado.</p>
+        </div>
+      </div>
+      <div class="nl-step">
+        <div class="nl-box">
+          <div class="nl-num">3</div>
+          <h5>Sequência educacional</h5>
+          <p>5–7 e-mails ao longo de 14 dias. Educa sobre o mecanismo, objeções, comparativos.</p>
+        </div>
+      </div>
+      <div class="nl-step">
+        <div class="nl-box">
+          <div class="nl-num">4</div>
+          <h5>Newsletter regular</h5>
+          <p>Quinzenal. Atualização de safra, mercado, novidades da FeeAgro. Mantém o lead aquecido.</p>
+        </div>
+      </div>
+      <div class="nl-step">
+        <div class="nl-box">
+          <div class="nl-num">5</div>
+          <h5>Convite à ação</h5>
+          <p>Masterclass do mês, novo produto, oportunidade de safra. CTA direto para WhatsApp.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid2" style="margin-top:16px">
+    <div class="card">
+      <span class="tag t-green">Conteúdo sugerido</span>
+      <h4>O que escrever na newsletter</h4>
+      <p>Atualização do mercado de soja e milho e o que isso significa para o investidor. Como funciona cada produto da FeeAgro em linguagem simples. Comparativo de rentabilidade com CDB, atualizado mensalmente. Bastidores de uma operação — como o crédito chega no produtor. Depoimento de investidor que recebeu o primeiro rendimento.</p>
+    </div>
+    <div class="card">
+      <span class="tag t-amber">Métricas a acompanhar</span>
+      <h4>Como medir o sucesso</h4>
+      <p>Taxa de abertura (meta: acima de 30%). Taxa de clique no CTA (meta: acima de 3%). Leads reativados — quantos da base voltam ao WhatsApp após a newsletter. Inscritos na masterclass vindos da newsletter. Tamanho da lista crescendo mês a mês.</p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:12px">
+    <span class="tag t-purple">Ferramenta</span>
+    <h4>Stack recomendado</h4>
+    <p>ActiveCampaign ou MailerLite para automação de e-mail com segmentação por tag de produto (capturada no quiz). Integração via Zapier com o CRM atual. Formulário de captura embutido no quiz, na página da masterclass e no blog. A segmentação por produto desde o início é o que torna a newsletter relevante — o lead recebe conteúdo sobre SiloRenda se demonstrou interesse em SiloRenda, não conteúdo genérico.</p>
+  </div>
+</div>
+
+<!-- ======== CANAIS ======== -->
+<div id="canais" class="section">
+  <p class="sec-title">Canais de aquisição</p>
+  <p class="sec-sub">Mapa completo por público, fase de ativação e prioridade. Não ativar todos ao mesmo tempo — respeitar a sequência de fases.</p>
+
+  <div class="ch-header">
+    <span class="ch-col">Canal</span>
+    <span class="ch-col">Função e abordagem</span>
+    <span class="ch-col">O que precisa</span>
+    <span class="ch-col">Prioridade</span>
+  </div>
+
+  <div class="ch-row">
+    <div><div class="ch-name">Meta Ads</div><div class="ch-pub">P1 · Fase 1 · topo</div></div>
+    <div class="ch-desc">Canal principal atual. Migrar criativo de branding para direct response. Gancho de problema antes de gancho de produto. Testar VSL curto e reels educacionais além do estático.</div>
+    <div class="ch-tools">Gerenciador Meta · pixel · LP de qualificação · quiz integrado · criativos de DR</div>
+    <div><span class="pr prio-a">Alta</span></div>
+  </div>
+
+  <div class="ch-row">
+    <div><div class="ch-name">WhatsApp SDR</div><div class="ch-pub">Todos · Fase 1 · fundo</div></div>
+    <div class="ch-desc">Canal de conversão principal. Otimizar scripts por produto. Integrar dados do quiz para personalizar abertura. Criar fluxos de recontato segmentados por nível de interesse e produto.</div>
+    <div class="ch-tools">WhatsApp Business API · CRM · scripts por produto · integração quiz → SDR</div>
+    <div><span class="pr prio-a">Alta</span></div>
+  </div>
+
+  <div class="ch-row">
+    <div><div class="ch-name">Presell / Advertorial</div><div class="ch-pub">P1 · Fase 1 · meio</div></div>
+    <div class="ch-desc">Página de aquecimento entre o anúncio e o quiz. Formato artigo em primeira pessoa. Responde objeções de segurança e complexidade antes do lead chegar no SDR. Não é o site institucional.</div>
+    <div class="ch-tools">LP dedicada · copywriter · pixel de evento de página</div>
+    <div><span class="pr prio-a">Alta</span></div>
+  </div>
+
+  <div class="ch-row">
+    <div><div class="ch-name">Quiz de perfil</div><div class="ch-pub">P1 · Fase 1 · meio</div></div>
+    <div class="ch-desc">Qualificação e segmentação antes do SDR. 4–5 perguntas. Entrega recomendação de produto. Filtra lead abaixo de R$10k. Dados vão para o CRM — SDR já sabe o contexto na abertura.</div>
+    <div class="ch-tools">Typeform · Zapier · CRM · mapeamento produto × resposta</div>
+    <div><span class="pr prio-a">Alta</span></div>
+  </div>
+
+  <div class="ch-row">
+    <div><div class="ch-name">YouTube Ads</div><div class="ch-pub">P1 · Fase 2 · topo/meio</div></div>
+    <div class="ch-desc">VSL de 3–5 min com estrutura educacional. Segmentação por interesse em finanças pessoais + agronegócio. Lead chega no WhatsApp muito mais qualificado que pelo Meta frio. Ideal para P1 de 35–55 anos.</div>
+    <div class="ch-tools">Google Ads · VSL produzido · landing page pós-vídeo · pixel</div>
+    <div><span class="pr prio-m">Fase 2</span></div>
+  </div>
+
+  <div class="ch-row">
+    <div><div class="ch-name">Masterclass mensal</div><div class="ch-pub">P1 e P2 · Fase 2 · meio</div></div>
+    <div class="ch-desc">Webinário ao vivo mensal. Constrói autoridade de empresa jovem. Gera lista qualificada. Cria evento que justifica budget de ads para inscrições. Conversão no ao vivo ou na sequência pós-evento.</div>
+    <div class="ch-tools">Zoom / StreamYard · página de inscrição · sequência e-mail · ads de inscrição · rosto definido</div>
+    <div><span class="pr prio-m">Fase 2</span></div>
+  </div>
+
+  <div class="ch-row">
+    <div><div class="ch-name">Newsletter</div><div class="ch-pub">P1 e P2 · Fase 2 · meio</div></div>
+    <div class="ch-desc">Lista própria de e-mail segmentada por produto de interesse. Nutre leads não convertidos. Reativa base para próxima masterclass. Ativo que nenhum algoritmo pode tirar da FeeAgro.</div>
+    <div class="ch-tools">ActiveCampaign ou MailerLite · sequência de 5–7 e-mails · newsletter quinzenal · integração CRM</div>
+    <div><span class="pr prio-m">Fase 2</span></div>
+  </div>
+
+  <div class="ch-row">
+    <div><div class="ch-name">LinkedIn</div><div class="ch-pub">P2 · Fase 2 · topo/meio</div></div>
+    <div class="ch-desc">Conteúdo técnico do fundador ou especialista. LinkedIn Ads segmentado por cargo financeiro. Objetivo é credibilidade que leva ao assessor — não venda direta. Ciclo mais longo que o Meta.</div>
+    <div class="ch-tools">Perfil LinkedIn ativo · LinkedIn Ads · 2–3 artigos técnicos/mês · rosto definido</div>
+    <div><span class="pr prio-m">Fase 2</span></div>
+  </div>
+
+  <div class="ch-row">
+    <div><div class="ch-name">Blog + SEO</div><div class="ch-pub">P1 e P2 · Fase 3 · topo</div></div>
+    <div class="ch-desc">Tráfego orgânico de longo prazo. Artigos educacionais sobre investimento no agro, CPR, recebíveis. Captura e-mail e alimenta a newsletter. Efeito composto a partir de 3–6 meses.</div>
+    <div class="ch-tools">CMS · pesquisa de palavras-chave · redator com conhecimento financeiro · captura de e-mail</div>
+    <div><span class="pr prio-b">Fase 3</span></div>
+  </div>
+
+  <div class="ch-row">
+    <div><div class="ch-name">Parcerias AAI</div><div class="ch-pub">P2 · Fase 3 · fundo</div></div>
+    <div class="ch-desc">Assessores independentes como canal de distribuição B2B para P2. Assessor leva o produto à base de clientes própria. Escalável sem ads. Exige kit comercial e processo de onboarding.</div>
+    <div class="ch-tools">Kit comercial · material técnico · contrato de parceria · modelo de comissionamento</div>
+    <div><span class="pr prio-b">Fase 3</span></div>
+  </div>
+</div>
+
+<!-- ======== FASES ======== -->
+<div id="fases" class="section">
+  <p class="sec-title">Plano de ação em fases</p>
+  <p class="sec-sub">Sequência de construção respeitando a lógica: primeiro corrigir o gargalo, depois construir ativos, depois escalar. Empresa nova não escala o que ainda não validou.</p>
+
+  <div class="phase-hdr" style="margin-top:32px">
+    <div class="ph-num ph1">1</div>
+    <div class="ph-meta">
+      <h2>Corrigir o gargalo</h2>
+      <div class="period">0–30 dias</div>
+      <div class="obj">Aumentar qualidade do lead sem aumentar budget. Meta: taxa de avanço de 7% para 15–25%.</div>
+    </div>
+  </div>
+  <div class="grid2">
+    <div class="card"><span class="tag t-green">Ferramenta</span><h4>Quiz de perfil de investidor</h4><p>4–5 perguntas antes do WhatsApp. Segmenta por produto e faixa de ticket. SDR recebe o contexto completo na abertura da conversa.</p><div class="need-lbl">O que precisa</div><div class="need-val">Typeform · Zapier · CRM · mapeamento produto × resposta</div></div>
+    <div class="card"><span class="tag t-green">Ferramenta</span><h4>LP de qualificação no lugar do formulário nativo</h4><p>Substituir formulário Meta por página com 2–3 perguntas antes do botão de WhatsApp. Filtra lead abaixo de R$10k automaticamente.</p><div class="need-lbl">O que precisa</div><div class="need-val">Landing page simples · pixel configurado · teste A/B</div></div>
+    <div class="card"><span class="tag t-amber">Conteúdo</span><h4>VSL de 60–90s como pré-aquecimento</h4><p>Vídeo curto explicando o mecanismo do SiloRenda antes do formulário. Lead que assistiu chega no SDR sabendo o que é FeeAgro.</p><div class="need-lbl">O que precisa</div><div class="need-val">Rosto definido · roteiro · produção simples</div></div>
+    <div class="card"><span class="tag t-gray">Estrutura</span><h4>Scripts do SDR por produto</h4><p>SDR hoje usa script genérico. Com o quiz, cria scripts específicos por produto e faixa de ticket para a IA do SDR personalizar a abertura.</p><div class="need-lbl">O que precisa</div><div class="need-val">Mapeamento dos scripts atuais · decisão do produto-âncora · integração quiz → SDR</div></div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="phase-hdr">
+    <div class="ph-num ph2">2</div>
+    <div class="ph-meta">
+      <h2>Construir ativos de audiência</h2>
+      <div class="period">30–90 dias</div>
+      <div class="obj">Criar funil educacional que aquece o lead antes do SDR. Reduzir dependência de tráfego frio puro.</div>
+    </div>
+  </div>
+  <div class="grid2">
+    <div class="card"><span class="tag t-amber">Conteúdo</span><h4>Presell / Advertorial</h4><p>Página no formato artigo. "Por que saí do CDB e fui para o agro." Primeira pessoa, tom de testemunho. Responde objeções antes do quiz.</p><div class="need-lbl">O que precisa</div><div class="need-val">Copywriter · personagem verossímil · página dedicada</div></div>
+    <div class="card"><span class="tag t-purple">Autoridade</span><h4>Masterclass mensal ao vivo</h4><p>"Como o agro paga 21% ao ano." Webinário ao vivo. Constrói credibilidade, gera lista, cria evento que justifica ads de inscrição.</p><div class="need-lbl">O que precisa</div><div class="need-val">Rosto definido · Zoom / StreamYard · página de inscrição · sequência de e-mail</div></div>
+    <div class="card"><span class="tag t-green">Ativo próprio</span><h4>Newsletter segmentada</h4><p>Captura e-mail no quiz, masterclass e blog. Sequência educacional por produto. Nutre leads não convertidos. Lista própria que nenhum algoritmo controla.</p><div class="need-lbl">O que precisa</div><div class="need-val">ActiveCampaign / MailerLite · sequência de 5–7 e-mails · newsletter quinzenal</div></div>
+    <div class="card"><span class="tag t-blue">Canal</span><h4>LinkedIn para Público 2</h4><p>Conteúdo técnico do fundador. LinkedIn Ads por cargo. Credibilidade que leva ao assessor. Ciclo mais longo — começa agora para colher em 90 dias.</p><div class="need-lbl">O que precisa</div><div class="need-val">Perfil LinkedIn ativo · artigos técnicos mensais · rosto definido</div></div>
+    <div class="card full"><span class="tag t-blue">Canal</span><h4>YouTube Ads com VSL educacional (3–5 min)</h4><p>P1 de 35–55 anos está no YouTube. VSL com estrutura Kishotenketsu explicando o mecanismo do SiloRenda. Segmentação por interesse em finanças pessoais + agronegócio. Lead chega no WhatsApp com intenção muito maior que pelo Meta frio.</p><div class="need-lbl">O que precisa</div><div class="need-val">Produção de vídeo mais robusta · roteiro VSL completo · conta Google Ads · pixel de conversão</div></div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="phase-hdr">
+    <div class="ph-num ph3">3</div>
+    <div class="ph-meta">
+      <h2>Escalar e diversificar</h2>
+      <div class="period">90–180 dias</div>
+      <div class="obj">Escalar o que funcionou. Adicionar canais orgânicos e distribuição B2B. Reduzir CAC.</div>
+    </div>
+  </div>
+  <div class="grid2">
+    <div class="card"><span class="tag t-amber">Orgânico</span><h4>Blog com SEO</h4><p>Artigos ranqueando para buscas de investidor em agro. Alimenta newsletter e funil indefinidamente sem custo de mídia. Efeito composto a partir de 3–6 meses.</p><div class="need-lbl">O que precisa</div><div class="need-val">Pesquisa de palavras-chave · 2–4 artigos/mês · redator financeiro</div></div>
+    <div class="card"><span class="tag t-blue">B2B</span><h4>Parcerias com AAIs</h4><p>Assessores independentes como canal de distribuição para P2. Escalável sem ads. Assessor leva FeeAgro à própria base de clientes de alto ticket.</p><div class="need-lbl">O que precisa</div><div class="need-val">Kit comercial · material técnico · contrato e comissionamento definidos</div></div>
+    <div class="card"><span class="tag t-gray">Automação</span><h4>Nutrição automática completa</h4><p>Todos os leads não convertidos entram em fluxo automático por e-mail + WhatsApp. Segmentado por produto e engajamento. Reativa base sem custo adicional.</p><div class="need-lbl">O que precisa</div><div class="need-val">CRM com automação · tags de segmentação · sequências por produto</div></div>
+    <div class="card"><span class="tag t-amber">Prova</span><h4>Depoimentos em vídeo de investidores</h4><p>Com 6+ meses, haverá investidores que receberam rendimento. Depoimento de quem investiu e recebeu é o ativo de conversão mais poderoso. Uma prova real vale mais que dez páginas de copy.</p><div class="need-lbl">O que precisa</div><div class="need-val">Mapeamento de investidores satisfeitos · produção simples de vídeo</div></div>
+  </div>
+</div>
+
+<!-- ======== IMPEDIMENTOS ======== -->
+<div id="impedimentos" class="section">
+  <p class="sec-title">Possíveis impedimentos</p>
+  <p class="sec-sub">Riscos, bloqueios e como mitigá-los antes de começar. Mapeados por grau de impacto na execução.</p>
+
+  <div class="imp"><div class="imp-icon i-h">!</div><div>
+    <h4>Ausência de rosto e voz definidos — bloqueante crítico</h4>
+    <p>Advertorial, masterclass, VSL e LinkedIn exigem um personagem com credibilidade. Sem isso, todo o conteúdo fica genérico e institucional. Empresa de 5 meses precisa de um rosto para compensar a falta de track record longo.</p>
+    <div class="imp-sol">Mitigação: Definir imediatamente quem é o porta-voz — fundador, especialista em agro do Grupo Imaculada ou figura de credibilidade. É a decisão que desbloqueia toda a produção de conteúdo. Sem ela, a Fase 2 não começa.</div>
+  </div></div>
+
+  <div class="imp"><div class="imp-icon i-h">!</div><div>
+    <h4>Integração técnica quiz → CRM → SDR</h4>
+    <p>O quiz só muda o resultado se os dados de qualificação chegarem no CRM e o SDR acessar antes de abrir a conversa. Sem integração funcionando, o quiz vira formulário bonito que não muda nada na prática.</p>
+    <div class="imp-sol">Mitigação: Mapear o stack atual (CRM, WhatsApp API, automação) antes de escolher a ferramenta de quiz. Typeform + Zapier resolve na maioria dos casos. Testar a integração completa antes de ativar tráfego.</div>
+  </div></div>
+
+  <div class="imp"><div class="imp-icon i-m">~</div><div>
+    <h4>Capacidade do assessor × volume qualificado triplicado</h4>
+    <p>Se a Fase 1 funcionar, leads qualificados chegando ao assessor podem triplicar. Se o assessor não absorver, o gargalo migra do SDR para o fechamento — e leads quentes esfriam na fila.</p>
+    <div class="imp-sol">Mitigação: Definir capacidade máxima atual do assessor antes de escalar tráfego. Planejar onboarding de assessores adicionais para a Fase 2 se necessário. CRM com fila gerenciada e SLA definido.</div>
+  </div></div>
+
+  <div class="imp"><div class="imp-icon i-m">~</div><div>
+    <h4>Compliance e regulamentação da comunicação</h4>
+    <p>Produtos regulados pela CVM têm restrições de comunicação. Promessas absolutas de rentabilidade e termos como "garantia" ou "sem risco" podem travar anúncios ou gerar problemas regulatórios.</p>
+    <div class="imp-sol">Mitigação: Validar criativos e o advertorial com assessoria jurídica antes de publicar. Usar sempre disclaimer de risco. Os materiais atuais já navegam bem nisso — manter o padrão ao escalar.</div>
+  </div></div>
+
+  <div class="imp"><div class="imp-icon i-m">~</div><div>
+    <h4>MP 1.303/2025 — risco tributário nos comparativos</h4>
+    <p>A MP pode alterar tributação de FIDC e CRA para P.F. a partir de 2026. Materiais que comparam rentabilidade líquida com CDB podem ficar desatualizados ou imprecisos se a tributação mudar.</p>
+    <div class="imp-sol">Mitigação: Monitorar aprovação da MP. Usar comparativos de rentabilidade bruta com disclaimer. Preparar versões alternativas dos criativos para cenário pós-aprovação.</div>
+  </div></div>
+
+  <div class="imp"><div class="imp-icon i-l">·</div><div>
+    <h4>Track record limitado para o Público 2</h4>
+    <p>Investidor sofisticado pergunta: "qual o histórico de inadimplência? Quantos ciclos completados?" Com 5 meses, a resposta é limitada. Dificulta fechamento de tickets maiores no curto prazo.</p>
+    <div class="imp-sol">Mitigação: Apoiar credibilidade no Grupo Imaculada e na estrutura regulada pela CVM. Ser transparente sobre o momento da empresa. Focar P2 a partir da Fase 2, quando haverá mais dados operacionais.</div>
+  </div></div>
+
+  <div class="imp"><div class="imp-icon i-l">·</div><div>
+    <h4>Blog e SEO — retorno lento</h4>
+    <p>Conteúdo orgânico leva 3–6 meses para ranquear e gerar tráfego relevante. Equipe pode questionar o valor no curto prazo e descontinuar antes de ver resultado.</p>
+    <div class="imp-sol">Mitigação: Tratar blog como investimento de longo prazo desde o início, com expectativa alinhada. Começar com 2 artigos/mês para construir base sem sobrecarregar o time. Não cobrar resultado nos primeiros 90 dias.</div>
+  </div></div>
+</div>
+
+</div><!-- /content -->
+
+<script>
+function show(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+function togglePyr(el) {
+  const isOpen = el.classList.contains('open');
+  document.querySelectorAll('.pyr-level').forEach(p => p.classList.remove('open'));
+  if (!isOpen) el.classList.add('open');
+}
+</script>
+</body>
+</html>
