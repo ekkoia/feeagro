@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap');
 
@@ -152,6 +153,57 @@ body{font-family:'DM Sans',sans-serif;background:#0c1208;color:#e8e4d8;min-heigh
 .nl-box h5{font-size:12px;font-weight:500;color:#e8e4d8;margin-bottom:6px}
 .nl-box p{font-size:11px;color:#6a7e5a;line-height:1.5}
 .nl-num{font-family:'DM Serif Display',serif;font-size:22px;color:#a8c97a;margin-bottom:4px}
+
+/* ===== MOBILE RESPONSIVO ===== */
+@media(max-width:640px){
+  .header{padding:16px 16px 12px}
+  .doc-label{display:none}
+  .nav{gap:4px;margin-top:8px}
+  .btn{font-size:10px;padding:4px 10px}
+  .content{padding:0 16px 60px}
+  .sec-title{font-size:20px;margin-top:24px}
+  .sec-sub{font-size:12px;margin-bottom:18px}
+
+  /* grids viram 1 coluna */
+  .grid2,.grid3,.grid4{grid-template-columns:1fr}
+  .full{grid-column:1}
+
+  /* stats menores */
+  .stat{font-size:26px}
+
+  /* pirâmide — zera as margens laterais para não cortar */
+  .pyr-l5,.pyr-l4,.pyr-l3,.pyr-l2,.pyr-l1{margin-left:0;margin-right:0}
+  .pyr-header{padding:12px 14px}
+  .pyr-label{font-size:12px}
+  .pyr-desc,.pyr-tools{font-size:10px}
+  .pyr-inner{padding:0 14px 14px}
+  .pyr-inner .pyr-full{font-size:12px}
+
+  /* públicos empilhados */
+  .pub-card{margin-bottom:12px}
+  .pub-num{font-size:32px}
+
+  /* canais — colapsa tabela em cards */
+  .ch-header{display:none}
+  .ch-row{grid-template-columns:1fr;gap:8px;padding:14px}
+  .ch-row>div:last-child{margin-top:4px}
+
+  /* newsletter flow — scroll horizontal já funciona, só ajusta tamanho */
+  .nl-box{padding:10px}
+  .nl-num{font-size:18px}
+
+  /* funil flow */
+  .flow-card{padding:12px 14px}
+  .flow-card h4{font-size:12px}
+  .flow-card p{font-size:11px}
+
+  /* impedimentos */
+  .imp{padding:12px 14px;gap:10px}
+
+  /* fases */
+  .phase-hdr{flex-wrap:wrap;gap:10px}
+  .ph-meta h2{font-size:16px}
+}
 </style>
 </head>
 <body>
