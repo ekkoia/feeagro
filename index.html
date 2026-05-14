@@ -12,8 +12,8 @@
 :root{
   --bg:#0c1208;--bg2:#0f1a0a;--bg3:#0a1007;
   --border:#2a3520;--border2:#1e2c14;
-  --text:#e8e4d8;--text2:#8a9e78;--text3:#7a8e6a;
-  --muted:#6a7e5a;--muted2:#4a5e3a;--muted3:#3d5228;
+  --text:#e8e4d8;--text2:#b0c898;--text3:#9aae82;
+  --muted:#8a9e78;--muted2:#6a8050;--muted3:#5a7040;
   --accent:#a8c97a;--accent2:#5ab03a;
   --card-bg:#0f1a0a;--header-bg:#0c1208;
   --stat:#a8c97a;--imp-bg:#0f1a0a;
@@ -195,17 +195,47 @@ body.light .imp-sol{background:#d8f0c8;color:#2a6010}
 .nl-num{font-family:'DM Serif Display',serif;font-size:22px;color:var(--accent);margin-bottom:4px}
 
 /* ── MAPA MENTAL ── */
-#mc{position:relative;height:calc(100vh - 140px);margin:16px -32px 0;overflow:hidden;background:var(--map-bg);border-top:1px solid var(--border);border-bottom:1px solid var(--border);transition:background .3s}
+#mapamental{
+  padding:0!important;
+  position:fixed;top:95px;left:0;right:0;bottom:0;
+  display:none;
+  z-index:50;
+}
+#mapamental.active{display:block}
+#mc{
+  position:relative;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:var(--map-bg);
+  border-top:1px solid var(--border);
+  transition:background .3s;
+}
 #msv{width:100%;height:100%;display:block;cursor:grab}
 #msv:active{cursor:grabbing}
 .mctrl{width:32px;height:32px;background:var(--card-bg);border:1px solid var(--border);color:var(--muted);border-radius:7px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .2s;line-height:1}
 .mctrl:hover{border-color:var(--accent);color:var(--accent)}
-#mp{position:absolute;bottom:0;left:0;right:0;background:var(--card-bg);border-top:1px solid var(--border);transform:translateY(100%);transition:transform .35s cubic-bezier(.4,0,.2,1),background .3s;padding:16px 24px 20px;max-height:155px}
+#mp{
+  position:absolute;bottom:0;left:0;right:0;
+  background:var(--card-bg);border-top:1px solid var(--border);
+  transform:translateY(100%);
+  transition:transform .35s cubic-bezier(.4,0,.2,1),background .3s;
+  padding:16px 24px 20px;max-height:155px;z-index:20;
+}
 #mp.open{transform:translateY(0)}
+#mp-close{
+  position:absolute;top:12px;right:14px;
+  background:none;border:1px solid var(--border);
+  color:var(--muted);width:26px;height:26px;
+  border-radius:50%;cursor:pointer;font-size:14px;
+  line-height:1;display:flex;align-items:center;justify-content:center;
+  z-index:25;transition:all .2s;
+}
+#mp-close:hover{border-color:var(--accent);color:var(--accent)}
 #mp-badge{display:inline-block;font-size:9px;letter-spacing:1.8px;text-transform:uppercase;padding:2px 8px;border-radius:3px;font-weight:500;margin-bottom:6px}
 #mp-name{font-family:'DM Serif Display',serif;font-size:15px;color:var(--text);margin-bottom:5px;line-height:1.3}
-#mp-desc{font-size:12px;color:var(--text3);line-height:1.7;max-width:700px}
-#mhint{position:absolute;top:10px;left:50%;transform:translateX(-50%);font-size:9px;color:#2d4a1a;letter-spacing:1.5px;text-transform:uppercase;pointer-events:none;white-space:nowrap;animation:hFade 5s forwards}
+#mp-desc{font-size:12px;color:var(--text3);line-height:1.7;max-width:700px;padding-right:36px}
+#mhint{position:absolute;top:10px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--muted3);letter-spacing:1.5px;text-transform:uppercase;pointer-events:none;white-space:nowrap;animation:hFade 5s forwards;z-index:5}
 @keyframes hFade{0%{opacity:1}65%{opacity:1}100%{opacity:0}}
 
 @media(max-width:640px){
@@ -238,7 +268,7 @@ body.light .imp-sol{background:#d8f0c8;color:#2a6010}
   .imp{padding:12px 14px;gap:10px}
   .phase-hdr{flex-wrap:wrap;gap:10px}
   .ph-meta h2{font-size:16px}
-  #mc{margin:8px -16px 0;height:calc(100vh - 160px)}
+  #mapamental{top:115px}
 }
 </style>
 </head>
@@ -497,7 +527,7 @@ body.light .imp-sol{background:#d8f0c8;color:#2a6010}
   <div id="mc">
     <svg id="msv"></svg>
 
-    <!-- Controles -->
+    <!-- Controles de zoom — canto inferior direito -->
     <div style="position:absolute;bottom:12px;right:12px;display:flex;flex-direction:column;gap:6px;z-index:10">
       <button class="mctrl" onclick="mReset()" title="Centralizar">⊙</button>
       <button class="mctrl" onclick="mZoom(1.3)" title="Zoom +">+</button>
@@ -509,7 +539,8 @@ body.light .imp-sol{background:#d8f0c8;color:#2a6010}
 
     <!-- Painel de detalhe -->
     <div id="mp">
-      <button onclick="closeMp()" style="position:absolute;top:12px;right:14px;background:none;border:1px solid #2a3520;color:#5a6e45;width:24px;height:24px;border-radius:50%;cursor:pointer;font-size:13px;line-height:1">×</button>
+      <!-- X separado do zoom, canto superior direito do painel -->
+      <button id="mp-close" onclick="closeMp()">×</button>
       <div id="mp-badge"></div>
       <div id="mp-name"></div>
       <div id="mp-desc"></div>
@@ -525,6 +556,12 @@ function toggleTheme() {
   const isLight = document.body.classList.toggle('light');
   document.getElementById('theme-btn').textContent = isLight ? '● Escuro' : '☀ Claro';
   localStorage.setItem('fa-theme', isLight ? 'light' : 'dark');
+  // Re-render mind map if already open so colors match the new theme
+  if (window._mapaInit && document.getElementById('mapamental').classList.contains('active')) {
+    initMindMap();
+  } else {
+    window._mapaInit = false; // force re-init next time map is opened
+  }
 }
 // Restore preference
 if (localStorage.getItem('fa-theme') === 'light') {
@@ -686,10 +723,12 @@ function initMindMap() {
   });
   root.color = "#a8c97a";
 
-  const nodeTextCol = isLight ? '#1a2410' : '#dde8cc';
-  const nodeSubCol = isLight ? '#3a6020' : '#3d5228';
-  const leafCol = isLight ? '#3a6030' : '#7a9068';
-  const leafHover = isLight ? '#1a4010' : '#aac88a';
+  const nodeTextCol = isLight ? '#1a2410' : '#ffffff';
+  const nodeSubCol = isLight ? '#3a6020' : '#a8c97a';
+  const leafCol = isLight ? '#3a6030' : '#c8e8a8';
+  const leafHover = isLight ? '#1a4010' : '#ffffff';
+  const leafSize = isLight ? "10px" : "10px";
+  const leafWeight = isLight ? "400" : "500";
   const linkPath = d3.linkRadial().angle(d => d.x).radius(d => d.y);
   gMain.append("g").selectAll("path")
     .data(root.links()).join("path")
@@ -723,7 +762,10 @@ function initMindMap() {
     const g = d3.select(this);
     const col = d.color;
     g.append("circle").attr("r",46).attr("fill","none").attr("stroke",col).attr("stroke-width",0.8).attr("opacity",0.18);
-    g.append("circle").attr("r",38).attr("fill",col+"16").attr("stroke",col).attr("stroke-width",1.8).attr("stroke-opacity",0.85);
+    // Dark mode: solid fill for text contrast. Light mode: original transparent fill
+    g.append("circle").attr("r",38)
+      .attr("fill", isLight ? col+"16" : col+"55")
+      .attr("stroke",col).attr("stroke-width",1.8).attr("stroke-opacity",0.85);
     g.append("text").attr("text-anchor","middle").attr("dy","-11").attr("font-size","14px").attr("fill",col).text(d.data.icon || "●");
     const words = d.data.name.split(" ");
     const lines = [];
@@ -731,7 +773,13 @@ function initMindMap() {
     words.forEach(w => { const t = cur ? cur+" "+w : w; if(t.length <= 12){cur=t;}else{if(cur)lines.push(cur);cur=w;} });
     if(cur) lines.push(cur);
     lines.slice(0,2).forEach((line,i) => {
-      g.append("text").attr("text-anchor","middle").attr("dy",(3+(i-(Math.min(lines.length,2)-1)/2)*12)+"px").attr("font-size","9.5px").attr("font-weight","500").attr("fill",nodeTextCol).text(line);
+      g.append("text").attr("text-anchor","middle")
+       .attr("dy",(3+(i-(Math.min(lines.length,2)-1)/2)*(isLight?12:13))+"px")
+       .attr("font-size", isLight ? "9.5px" : "9.5px")
+       .attr("font-weight", isLight ? "500" : "500")
+       .attr("fill",nodeTextCol)
+       .style("text-shadow", isLight ? "none" : "0 1px 3px rgba(0,0,0,0.8)")
+       .text(line);
     });
     g.on("mouseover", function(){ d3.select(this).select("circle:nth-child(2)").attr("opacity",0.5); })
      .on("mouseout",  function(){ d3.select(this).select("circle:nth-child(2)").attr("opacity",0.18); });
@@ -752,12 +800,12 @@ function initMindMap() {
     let anchor, baseX, baseY;
     if (Math.abs(cos) > Math.abs(sin) * 0.6) {
       anchor = isRight ? "start" : "end";
-      baseX = isRight ? 12 : -12;
+      baseX = isRight ? 14 : -14;
       baseY = 0;
     } else {
       anchor = "middle";
       baseX = 0;
-      baseY = sin > 0 ? 14 : -14;
+      baseY = sin > 0 ? (isLight ? 14 : 20) : (isLight ? -14 : -20);
     }
 
     const words = d.data.name.split(" ");
@@ -768,7 +816,7 @@ function initMindMap() {
     const fl = lines2.slice(0,3);
     const totalH = (fl.length-1)*12;
 
-    const tEl = g.append("text").attr("text-anchor",anchor).attr("font-size","10px").attr("fill",leafCol);
+    const tEl = g.append("text").attr("text-anchor",anchor).attr("font-size",leafSize).attr("font-weight",leafWeight).attr("fill",leafCol);
     fl.forEach((line,i) => {
       tEl.append("tspan").attr("x",baseX).attr("dy",i===0?(baseY-totalH/2):12).text(line);
     });
